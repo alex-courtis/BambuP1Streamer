@@ -1,4 +1,5 @@
-start: nuke build
+all: BambuP1Streamer nuke
+	docker build -t bambu_p1_streamer .
 	docker run \
 		-d \
 		--name bambu_p1_streamer \
@@ -7,14 +8,17 @@ start: nuke build
 		-e PRINTER_ACCESS_CODE="$$(cat pac)" \
 		bambu_p1_streamer
 
-BambuP1Streamer:
-	gcc src/BambuP1Streamer.cpp -o BambuP1Streamer
+start:
+	docker start bambu_p1_streamer
 
-build: BambuP1Streamer
-	docker build -t bambu_p1_streamer .
+stop:
+	docker stop bambu_p1_streamer
 
 restart:
 	docker restart bambu_p1_streamer
+
+BambuP1Streamer:
+	gcc src/BambuP1Streamer.cpp -o BambuP1Streamer
 
 nuke:
 	docker stop bambu_p1_streamer || true
@@ -24,4 +28,4 @@ nuke:
 clean: nuke
 	rm BambuP1Streamer
 
-.PHONY: start build restart nuke clean
+.PHONY: all start stop build restart nuke clean
